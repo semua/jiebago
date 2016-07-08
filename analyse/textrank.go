@@ -111,7 +111,7 @@ func (u *undirectWeightedGraph) rank() Segments {
 
 // TextRankWithPOS extracts keywords from sentence using TextRank algorithm.
 // Parameter allowPOS allows a customized pos list.
-func (t *TextRanker) TextRankWithPOS(sentence string, topK int, allowPOS []string) Segments {
+func (t *TextRanker) TextRankWithPOS(sentence string, topK int, allowPOS []string, allowSingleWord bool) Segments {
 	posFilt := make(map[string]int)
 	for _, pos := range allowPOS {
 		posFilt[pos] = 1
@@ -121,11 +121,14 @@ func (t *TextRanker) TextRankWithPOS(sentence string, topK int, allowPOS []strin
 	span := 5
 	var pairs []posseg.Segment
 	for pair := range t.seg.Cut(sentence, true) {
+		if !allowSingleWord && len(pair.Text()) <= 3 {
+			continue
+		}
 		pairs = append(pairs, pair)
 	}
 	for i := range pairs {
 		if _, ok := posFilt[pairs[i].Pos()]; ok {
-			for j := i + 1; j < i+span && j <= len(pairs); j++ {
+			for j := i + 1; j < i+span && j < len(pairs); j++ {
 				if _, ok := posFilt[pairs[j].Pos()]; !ok {
 					continue
 				}
@@ -150,7 +153,14 @@ func (t *TextRanker) TextRankWithPOS(sentence string, topK int, allowPOS []strin
 // TextRank extract keywords from sentence using TextRank algorithm.
 // Parameter topK specify how many top keywords to be returned at most.
 func (t *TextRanker) TextRank(sentence string, topK int) Segments {
-	return t.TextRankWithPOS(sentence, topK, defaultAllowPOS)
+	return t.TextRankWithPOS(sentence, topK, defaultAllowPOS, true)
+}
+
+// TextRank extract keywords from sentence using TextRank algorithm.
+// Parameter topK specify how many top keywords to be returned at most.
+// words >=2
+func (t *TextRanker) TextRankWords(sentence string, topK int) Segments {
+	return t.TextRankWithPOS(sentence, topK, defaultAllowPOS, false)
 }
 
 // TextRanker is used to extract tags from sentence.
