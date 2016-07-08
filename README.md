@@ -73,3 +73,7 @@ func Example() {
 ## 许可证
 
 MIT: http://wangbin.mit-license.org
+
+## Fork内容（2016-07-08 from 晋东毅）
+textrank修正了索引越界问题，并追加了过滤单字的函数
+
