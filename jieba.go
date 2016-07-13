@@ -6,9 +6,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/wangbin/jiebago/dictionary"
-	"github.com/wangbin/jiebago/finalseg"
-	"github.com/wangbin/jiebago/util"
+	"github.com/semua/jiebago/dictionary"
+	"github.com/semua/jiebago/finalseg"
+	"github.com/semua/jiebago/util"
 )
 
 var (
