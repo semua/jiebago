@@ -46,28 +46,52 @@ func (ss Segments) Swap(i, j int) {
 
 // TagExtracter is used to extract tags from sentence.
 type TagExtracter struct {
-	seg      *jiebago.Segmenter
-	idf      *Idf
-	stopWord *StopWord
+	seg            *jiebago.Segmenter
+	idf            *Idf
+	stopWord       *StopWord
+	segLoaded      bool
+	idfLoaded      bool
+	stopWordLoaded bool
 }
 
 // LoadDictionary reads the given filename and create a new dictionary.
 func (t *TagExtracter) LoadDictionary(fileName string) error {
+	if t.segLoaded {
+		return nil
+	}
 	t.stopWord = NewStopWord()
 	t.seg = new(jiebago.Segmenter)
-	return t.seg.LoadDictionary(fileName)
+	err := t.seg.LoadDictionary(fileName)
+	if err == nil {
+		t.segLoaded = true
+	}
+	return err
 }
 
 // LoadIdf reads the given file and create a new Idf dictionary.
 func (t *TagExtracter) LoadIdf(fileName string) error {
+	if t.idfLoaded {
+		return nil
+	}
 	t.idf = NewIdf()
-	return t.idf.loadDictionary(fileName)
+	err := t.idf.loadDictionary(fileName)
+	if err == nil {
+		t.idfLoaded = true
+	}
+	return err
 }
 
 // LoadStopWords reads the given file and create a new StopWord dictionary.
 func (t *TagExtracter) LoadStopWords(fileName string) error {
+	if t.stopWordLoaded {
+		return nil
+	}
 	t.stopWord = NewStopWord()
-	return t.stopWord.loadDictionary(fileName)
+	err := t.stopWord.loadDictionary(fileName)
+	if err == nil {
+		t.stopWordLoaded = true
+	}
+	return err
 }
 
 // ExtractTags extracts the topK key words from sentence.

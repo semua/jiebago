@@ -165,11 +165,19 @@ func (t *TextRanker) TextRankWords(sentence string, topK int) Segments {
 
 // TextRanker is used to extract tags from sentence.
 type TextRanker struct {
-	seg *posseg.Segmenter
+	seg       *posseg.Segmenter
+	segLoaded bool
 }
 
 // LoadDictionary reads a given file and create a new dictionary file for Textranker.
 func (t *TextRanker) LoadDictionary(fileName string) error {
+	if t.segLoaded {
+		return nil
+	}
 	t.seg = new(posseg.Segmenter)
-	return t.seg.LoadDictionary(fileName)
+	err := t.seg.LoadDictionary(fileName)
+	if err == nil {
+		t.segLoaded = true
+	}
+	return err
 }
