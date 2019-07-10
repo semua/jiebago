@@ -5,6 +5,7 @@ import (
 	"math"
 	"regexp"
 
+	jiebagoDictionary "github.com/semua/jiebago/dictionary"
 	"github.com/semua/jiebago/util"
 )
 
@@ -334,4 +335,24 @@ func (seg *Segmenter) Cut(sentence string, hmm bool) <-chan Segment {
 		close(result)
 	}()
 	return result
+}
+
+//Frequency returns the frequency and existence of give word
+func (seg *Segmenter) Frequency(key string) (float64, bool) {
+	return seg.dict.Frequency(key)
+}
+func (seg *Segmenter) Pos(key string) (string, bool) {
+	return seg.dict.Pos(key)
+}
+func (seg *Segmenter) AddToken(word string, frequency float64, pos string) {
+	if pos == "" || frequency == 0.0 {
+		mappos, ok := seg.dict.Pos(word)
+		if !ok {
+			seg.dict.AddToken(jiebagoDictionary.NewToken(word, frequency, "x"))
+		} else {
+			seg.dict.AddToken(jiebagoDictionary.NewToken(word, frequency, mappos))
+		}
+	} else {
+		seg.dict.AddToken(jiebagoDictionary.NewToken(word, frequency, pos))
+	}
 }

@@ -181,3 +181,28 @@ func (t *TextRanker) LoadDictionary(fileName string) error {
 	}
 	return err
 }
+
+// Frequency returns a word's frequency and existence
+func (t *TextRanker) Frequency(key string) (float64, bool) {
+	return t.seg.Frequency(key)
+}
+func (t *TextRanker) Pos(key string) (string, bool) {
+	return t.seg.Pos(key)
+}
+
+// AddWord adds a new word with frequency to dictionary
+func (t *TextRanker) AddWord(word string, frequency float64, pos string) {
+	t.seg.AddToken(word, frequency, pos)
+}
+
+// DeleteWord removes a word from dictionary
+func (t *TextRanker) DeleteWord(word string) {
+	pos, ok := t.seg.Pos(word)
+	if !ok {
+		pos = ""
+	}
+	t.seg.AddToken(word, 0.0, pos)
+}
+func (t *TextRanker) LoadUserDictionary(fileName string) error {
+	return t.seg.LoadUserDictionary(fileName)
+}

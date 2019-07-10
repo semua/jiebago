@@ -67,6 +67,13 @@ func (t *TagExtracter) LoadDictionary(fileName string) error {
 	}
 	return err
 }
+func (t *TagExtracter) SetSeg(segobj *jiebago.Segmenter) {
+	if t.segLoaded == false {
+		t.stopWord = NewStopWord()
+	}
+	t.seg = segobj
+	t.segLoaded = true
+}
 
 // LoadIdf reads the given file and create a new Idf dictionary.
 func (t *TagExtracter) LoadIdf(fileName string) error {
@@ -136,4 +143,13 @@ func (t *TagExtracter) ExtractTags(sentence string, topK int) (tags Segments) {
 		tags = ws
 	}
 	return tags
+}
+
+// 返回idf信息，idf frequency, idf median, findinIdf
+func (t *TagExtracter) GetIdf(k string) (frequency, median float64, findinIdf bool) {
+	if freq, ok := t.idf.Frequency(k); ok {
+		return freq, t.idf.median, ok
+	} else {
+		return 0.0, t.idf.median, ok
+	}
 }

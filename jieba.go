@@ -104,6 +104,9 @@ func (seg *Segmenter) LoadDictionary(fileName string) error {
 func (seg *Segmenter) LoadUserDictionary(fileName string) error {
 	return seg.dict.loadDictionary(fileName)
 }
+func (seg *Segmenter) InitDictionary() {
+	seg.dict = &Dictionary{freqMap: make(map[string]float64)}
+}
 
 func (seg *Segmenter) dag(runes []rune) map[int][]int {
 	dag := make(map[int][]int)
